@@ -47,6 +47,8 @@ def descargar_fuente(fuente: Fuente, forzar: bool = False, intentos: int = 3) ->
             try:
                 with requests.get(url, params=fuente.params or None, headers=CABECERAS,
                                   timeout=(20, 300), stream=True) as r:
+                    if r.status_code == 400:
+                        raise ValueError(f"400 Bad Request: {r.text[:400]}")
                     r.raise_for_status()
                     tmp = destino.with_suffix(destino.suffix + ".part")
                     with tmp.open("wb") as f:
