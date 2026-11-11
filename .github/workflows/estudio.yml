@@ -108,3 +108,39 @@ jobs:
             git pull --rebase origin main
             git push
           fi
+
+  # Repite en Windows los mismos pasos del README, para asegurar que la guía funciona allí.
+  probar-en-windows:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Crear el entorno e instalar librerías (pasos 4 y 5 del README)
+        run: |
+          python -m venv .venv
+          .\.venv\Scripts\Activate.ps1
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Pruebas
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          python -m pytest -q tests
+
+      - name: Descargar, procesar y ejecutar los notebooks (pasos 6 a 8 del README)
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          python scripts\01_descargar.py
+          python scripts\03_procesar.py
+          Get-ChildItem notebooks\0*.ipynb | ForEach-Object {
+            jupyter nbconvert --to notebook --execute --output-dir "$env:RUNNER_TEMP" $_.FullName
+            if ($LASTEXITCODE -ne 0) { throw "Falló $($_.Name)" }
+          }
