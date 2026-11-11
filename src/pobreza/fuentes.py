@@ -126,8 +126,9 @@ FUENTES: list[Fuente] = [
         descripcion="Promedio del puntaje global y número de estudiantes por municipio y periodo.",
         obligatoria=False,
         params={
-            "$select": "periodo, cole_cod_mcpio_ubicacion as cod_mpio, avg(punt_global) as punt_global, "
+            "$select": "periodo, cole_cod_mcpio_ubicacion as cod_mpio, avg(punt_global::number) as puntaje, "
                        "count(*) as estudiantes",
+            "$where": "punt_global IS NOT NULL",
             "$group": "periodo, cole_cod_mcpio_ubicacion",
             "$limit": "100000",
         },

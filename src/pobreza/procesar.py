@@ -367,7 +367,7 @@ def procesar_saber11() -> pd.DataFrame | None:
     if not ruta.exists():
         print("  (falta saber11_municipios.csv, se salta)")
         return None
-    df = pd.read_csv(ruta, dtype=str)
+    df = pd.read_csv(ruta, dtype=str).rename(columns={"puntaje": "punt_global"})
     df["cod_mpio"] = df["cod_mpio"].map(lambda v: codigo(v, 5))
     df["punt_global"] = pd.to_numeric(df["punt_global"], errors="coerce")
     df["estudiantes"] = pd.to_numeric(df["estudiantes"], errors="coerce")
