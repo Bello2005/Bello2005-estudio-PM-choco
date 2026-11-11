@@ -22,6 +22,8 @@ Todo se descarga, se procesa y se ejecuta solo, con **GitHub Actions**. No hace 
   del Chocó frente a 11,9 % en el resto del país. Eliminación inadecuada de excretas: 72,4 % frente a 13,3 %.
 - **No es solo ruralidad.** Si se compara con municipios igual de rurales y del mismo tamaño, un municipio
   del Chocó sigue teniendo unos **22,5 puntos más de IPM** (IC 95 %: 19,8–25,2).
+- **La brecha educativa va más allá de la pobreza.** En Saber 11 (2017 y 2019), los colegios de los
+  municipios del Chocó sacan en promedio **22,8 puntos menos** de lo que se esperaría por su nivel de IPM.
 - **Las cabeceras también están rezagadas.** 16 de las 30 cabeceras chocoanas tienen más pobreza que la
   zona rural típica del país.
 - **El resultado no depende de los pesos.** Con cuatro esquemas de pesos distintos, el orden de los
