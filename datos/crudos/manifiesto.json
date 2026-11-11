@@ -70,5 +70,13 @@
     "bytes": 338576,
     "sha256": "ccdb83baad288303647bb5fcd545a895da9abe0857471d49ee6273dbd1293c7c",
     "fecha": "2026-11-11T00:51:19+00:00"
+  },
+  "saber11": {
+    "clave": "saber11",
+    "archivo": "saber11_municipios.csv",
+    "url": "https://www.datos.gov.co/resource/kgxf-xxbe.csv?%24select=periodo%2C+cole_cod_mcpio_ubicacion+as+cod_mpio%2C+avg%28punt_global%3A%3Anumber%29+as+puntaje%2C+count%28%2A%29+as+estudiantes&%24where=punt_global+IS+NOT+NULL&%24group=periodo%2C+cole_cod_mcpio_ubicacion&%24limit=100000",
+    "bytes": 332112,
+    "sha256": "284063f285767757c6f8aab9f7a463a0cdffdddb6e86e86bd962e1dc2f6b1e33",
+    "fecha": "2026-11-11T00:58:10+00:00"
   }
 }
