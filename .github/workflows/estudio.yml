@@ -1,0 +1,106 @@
+name: Descargar datos y correr el estudio
+
+# Corre en los servidores de GitHub: baja los datos oficiales, los procesa, ejecuta los notebooks
+# y guarda en el repo las tablas procesadas, las figuras y los notebooks con resultados.
+on:
+  workflow_dispatch:
+    inputs:
+      forzar:
+        description: "Volver a descargar todo aunque ya exista"
+        type: boolean
+        default: false
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "notebooks/**"
+      - "requirements.txt"
+      - ".github/workflows/estudio.yml"
+  schedule:
+    - cron: "17 11 1 * *"   # el día 1 de cada mes, por si el DANE publica algo nuevo
+
+permissions:
+  contents: write
+
+concurrency:
+  group: estudio
+  cancel-in-progress: false
+
+jobs:
+  estudio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instalar librerías
+        run: pip install -r requirements.txt
+
+      - name: Recuperar datos crudos de la corrida anterior
+        uses: actions/cache@v4
+        with:
+          path: datos/crudos
+          key: crudos-${{ github.run_id }}
+          restore-keys: crudos-
+
+      - name: Descargar fuentes
+        run: python scripts/01_descargar.py ${{ inputs.forzar && '--forzar' || '' }}
+
+      - name: Guardar una copia de los crudos en la rama datos-crudos
+        # Así cualquiera puede reproducir el estudio aunque el DANE mueva o cambie un archivo.
+        if: always()
+        run: |
+          tmp=$(mktemp -d)
+          cp -r datos/crudos/. "$tmp/"
+          cd "$tmp"
+          git init -q -b datos-crudos
+          git config user.name "Deiner Bello"
+          git config user.email "deinerb2.0.0.5@gmail.com"
+          printf '# Datos crudos\n\nCopia de los archivos descargados por `scripts/01_descargar.py` (ver manifiesto.json).\n' > README.md
+          git add -A
+          git commit -q -m "Datos crudos descargados el $(date -u +%F)"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" datos-crudos
+
+      - name: Inspeccionar anexos (queda en reportes/estructura_anexos.md)
+        if: always()
+        run: python scripts/02_inspeccionar.py
+
+      - name: Procesar
+        run: python scripts/03_procesar.py
+
+      - name: Ejecutar notebooks
+        run: |
+          shopt -s nullglob
+          for nb in notebooks/[0-9]*.ipynb; do
+            echo "::group::$nb"
+            jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.timeout=900 "$nb"
+            echo "::endgroup::"
+          done
+
+      - name: Guardar crudos como artefacto
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: datos-crudos
+          path: datos/crudos
+          retention-days: 30
+
+      - name: Subir resultados al repo
+        if: success()
+        run: |
+          git config user.name "Deiner Bello"
+          git config user.email "deinerb2.0.0.5@gmail.com"
+          git add datos/procesados reportes notebooks datos/crudos/manifiesto.json
+          if git diff --cached --quiet; then
+            echo "Sin cambios en los resultados."
+          else
+            git commit -m "Actualiza datos procesados y resultados del estudio"
+            git pull --rebase origin main
+            git push
+          fi
