@@ -12,3 +12,4 @@ requests>=2.31
 jupyter>=1.0
 nbconvert>=7.16
 ipykernel>=6.29
+pytest>=8.0

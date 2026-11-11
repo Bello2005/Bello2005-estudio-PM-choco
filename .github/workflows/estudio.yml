@@ -15,6 +15,7 @@ on:
       - "src/**"
       - "scripts/**"
       - "notebooks/**"
+      - "tests/**"
       - "requirements.txt"
       - ".github/workflows/estudio.yml"
   schedule:
@@ -41,6 +42,9 @@ jobs:
 
       - name: Instalar librerías
         run: pip install -r requirements.txt
+
+      - name: Pruebas
+        run: python -m pytest -q tests
 
       - name: Recuperar datos crudos de la corrida anterior
         uses: actions/cache@v4
