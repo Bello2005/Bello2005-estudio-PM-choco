@@ -5,7 +5,7 @@
     "url": "https://www.dane.gov.co/files/investigaciones/condiciones_vida/pobreza/2018/informacion-censal/anexo-censal-pobreza-municipal-2018.xlsx",
     "bytes": 3103782,
     "sha256": "a3ac3a60498ad1b19a9aa64e27c8810e4251377ce93effcf7d53fe756f8c826f",
-    "fecha": "2026-11-11T00:41:33+00:00"
+    "fecha": "2026-11-11T00:50:00+00:00"
   },
   "ipm_departamental": {
     "clave": "ipm_departamental",
@@ -13,7 +13,7 @@
     "url": "https://www.dane.gov.co/files/operaciones/PM/anex-PMultidimensional-Departamental-2025.xlsx",
     "bytes": 482244,
     "sha256": "73caab08046d6b35f80326b1b6f2e9b1cb8ad75a2ac4946515fda320ffaaf447",
-    "fecha": "2026-11-11T00:41:33+00:00"
+    "fecha": "2026-11-11T00:50:01+00:00"
   },
   "ipm_nacional": {
     "clave": "ipm_nacional",
@@ -21,7 +21,7 @@
     "url": "https://www.dane.gov.co/files/operaciones/PM/anex-PMultidimensional-2025.xlsx",
     "bytes": 449869,
     "sha256": "ae59a747adab22bb06fdd724262c0bcded0a9b256d477a1f0c366fbab00d09c0",
-    "fecha": "2026-11-11T00:41:34+00:00"
+    "fecha": "2026-11-11T00:50:02+00:00"
   },
   "ipm_pdet": {
     "clave": "ipm_pdet",
@@ -29,7 +29,7 @@
     "url": "https://www.dane.gov.co/files/operaciones/PM/anex-PMPDET-2025.xlsx",
     "bytes": 129721,
     "sha256": "15e12a6638a55cbfbe75144bd86d5aa8604d2cbafe4c9e726593380dc43b8fa8",
-    "fecha": "2026-11-11T00:41:35+00:00"
+    "fecha": "2026-11-11T00:50:03+00:00"
   },
   "nbi_2018": {
     "clave": "nbi_2018",
@@ -37,7 +37,7 @@
     "url": "https://www.dane.gov.co/files/censo2018/informacion-tecnica/CNPV-2018-NBI.xlsx",
     "bytes": 443433,
     "sha256": "d850d740873a5c652dcb9487fd583b3d3497b03b1b17feb7561711cd162aed13",
-    "fecha": "2026-11-11T00:41:35+00:00"
+    "fecha": "2026-11-11T00:50:04+00:00"
   },
   "poblacion_censo_2018": {
     "clave": "poblacion_censo_2018",
@@ -45,7 +45,7 @@
     "url": "https://www.dane.gov.co/files/censo2018/informacion-tecnica/CNPV-2018-Poblacion-Ajustada-por-Cobertura.xls",
     "bytes": 556544,
     "sha256": "a8efb9e801564faa004e01e4a685d42087592a899c4a59c2237f0808260ec8c1",
-    "fecha": "2026-11-11T00:41:36+00:00"
+    "fecha": "2026-11-11T00:50:05+00:00"
   },
   "proyecciones_municipales": {
     "clave": "proyecciones_municipales",
@@ -53,7 +53,7 @@
     "url": "https://www.dane.gov.co/files/censo2018/proyecciones-de-poblacion/Municipal/DCD-area-proypoblacion-Mun-2020-2035-ActPostCOVID-19.xlsx",
     "bytes": 1878067,
     "sha256": "4a696919048712ba386c034f48c476ac1c500e0e575be311e384fb461f44e6ba",
-    "fecha": "2026-11-11T00:41:50+00:00"
+    "fecha": "2026-11-11T00:50:19+00:00"
   },
   "mapa_municipios": {
     "clave": "mapa_municipios",
@@ -61,7 +61,7 @@
     "url": "https://raw.githubusercontent.com/caticoa3/colombia_mapa/master/co_2018_MGN_MPIO_POLITICO.geojson",
     "bytes": 2831943,
     "sha256": "b0187d9af793a67f6a2df4f3565be1f32dffd53c6c7b348eebf426ea18a99166",
-    "fecha": "2026-11-11T00:42:04+00:00"
+    "fecha": "2026-11-11T00:51:18+00:00"
   },
   "nota_metodologica_ipm_censal": {
     "clave": "nota_metodologica_ipm_censal",
@@ -69,6 +69,6 @@
     "url": "https://www.dane.gov.co/files/investigaciones/condiciones_vida/pobreza/2018/informacion-censal/nota-metodologia-censal-pobreza-municipal-2018.pdf",
     "bytes": 338576,
     "sha256": "ccdb83baad288303647bb5fcd545a895da9abe0857471d49ee6273dbd1293c7c",
-    "fecha": "2026-11-11T00:42:04+00:00"
+    "fecha": "2026-11-11T00:51:19+00:00"
   }
 }
