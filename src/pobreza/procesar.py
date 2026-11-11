@@ -379,10 +379,18 @@ def procesar_saber11() -> pd.DataFrame | None:
     serie["punt_global"] = serie["suma"] / serie["estudiantes"]
     serie = serie.drop(columns="suma")
     serie.to_csv(PROCESADOS / "saber11_serie.csv", index=False)
-    anio = min(serie["anio"].unique(), key=lambda a: (abs(a - 2018), a))
-    corte = serie[serie["anio"] == anio].drop(columns="anio")
+    # Hay años casi vacíos en la base (por ejemplo 2018 y 2020-2021). Se usan los años completos más cercanos
+    # a 2018 (el del censo); si hay dos a la misma distancia, se juntan (por ejemplo 2017 y 2019).
+    cobertura = serie.groupby("anio")["cod_mpio"].nunique()
+    completos = cobertura[cobertura >= 0.9 * cobertura.max()].index
+    distancia = min(abs(a - 2018) for a in completos)
+    usados = sorted(a for a in completos if abs(a - 2018) == distancia)
+    sub = serie[serie["anio"].isin(usados)].assign(suma=lambda x: x.punt_global * x.estudiantes)
+    corte = sub.groupby("cod_mpio", as_index=False)[["suma", "estudiantes"]].sum()
+    corte["punt_global"] = corte.pop("suma") / corte["estudiantes"]
+    corte["anios_saber11"] = " y ".join(map(str, usados))
     corte.to_csv(PROCESADOS / "saber11_2018.csv", index=False)
-    print(f"  saber11_2018.csv: año {anio}, {len(corte)} municipios, {corte['estudiantes'].sum():,.0f} estudiantes; "
+    print(f"  saber11_2018.csv: años {usados}, {len(corte)} municipios, {corte['estudiantes'].sum():,.0f} estudiantes; "
           f"serie {serie['anio'].min()}–{serie['anio'].max()}")
     return corte
 
