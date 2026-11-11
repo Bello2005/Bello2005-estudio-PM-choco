@@ -78,7 +78,7 @@ def descargar_fuente(fuente: Fuente, forzar: bool = False, intentos: int = 3) ->
 
 def descargar_todo(claves: list[str] | None = None, forzar: bool = False) -> list[dict]:
     fuentes = [f for f in FUENTES if claves is None or f.clave in claves]
-    previo = json.loads(MANIFIESTO.read_text()) if MANIFIESTO.exists() else {}
+    previo = json.loads(MANIFIESTO.read_text(encoding="utf-8")) if MANIFIESTO.exists() else {}
     resultados = []
     for f in fuentes:
         print(f"→ {f.clave}: {f.nombre}", flush=True)
@@ -93,5 +93,5 @@ def descargar_todo(claves: list[str] | None = None, forzar: bool = False) -> lis
         elif res["estado"] == "ya estaba":
             previo.setdefault(f.clave, datos)
         resultados.append(res)
-    MANIFIESTO.write_text(json.dumps(previo, indent=2, ensure_ascii=False))
+    MANIFIESTO.write_text(json.dumps(previo, indent=2, ensure_ascii=False), encoding="utf-8")
     return resultados

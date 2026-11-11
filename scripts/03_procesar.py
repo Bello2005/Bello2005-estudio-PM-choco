@@ -4,6 +4,9 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+# En Windows la consola a veces no usa UTF-8: así las tildes y los símbolos se ven bien.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 from pobreza.procesar import procesar_todo  # noqa: E402
 

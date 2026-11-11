@@ -42,7 +42,7 @@ def manifiesto() -> pd.DataFrame:
     ruta = CRUDOS / "manifiesto.json"
     if not ruta.exists():
         return pd.DataFrame()
-    m = json.loads(ruta.read_text())
+    m = json.loads(ruta.read_text(encoding="utf-8"))
     return pd.DataFrame([{"clave": k, **{c: v for c, v in d.items() if c != "clave"}} for k, d in m.items()])
 
 
