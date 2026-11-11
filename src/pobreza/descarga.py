@@ -62,6 +62,14 @@ def descargar_fuente(fuente: Fuente, forzar: bool = False, intentos: int = 3) ->
                         "fecha": datetime.now(timezone.utc).isoformat(timespec="seconds")}
             except Exception as e:  # noqa: BLE001 — se registra y se prueba lo siguiente
                 errores.append(f"{url} (intento {intento}): {e}")
+                if "/resource/" in url and "400" in str(e):
+                    # Consulta mal armada para este conjunto: se muestran sus columnas para poder corregirla.
+                    try:
+                        muestra = requests.get(url, params={"$limit": 1}, headers=CABECERAS, timeout=60)
+                        errores.append(f"   columnas disponibles: {muestra.text.splitlines()[0][:600]}")
+                    except Exception:  # noqa: BLE001
+                        pass
+                    break
                 time.sleep(2 * intento)
     return {"clave": fuente.clave, "estado": "error", "archivo": fuente.archivo, "errores": errores}
 
