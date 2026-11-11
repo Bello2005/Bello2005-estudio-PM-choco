@@ -1,0 +1,15 @@
+# Datos crudos: se regeneran con scripts/01_descargar.py
+datos/crudos/*
+!datos/crudos/.gitkeep
+!datos/crudos/manifiesto.json
+
+# Python / Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+
+# Sistema
+.DS_Store
