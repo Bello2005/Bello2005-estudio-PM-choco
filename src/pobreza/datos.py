@@ -43,7 +43,7 @@ def manifiesto() -> pd.DataFrame:
     if not ruta.exists():
         return pd.DataFrame()
     m = json.loads(ruta.read_text())
-    return pd.DataFrame.from_dict(m, orient="index").rename_axis("clave").reset_index()
+    return pd.DataFrame([{"clave": k, **{c: v for c, v in d.items() if c != "clave"}} for k, d in m.items()])
 
 
 def mapa_municipios():

@@ -116,19 +116,20 @@ FUENTES: list[Fuente] = [
     # --- Educación (datos.gov.co, API Socrata) ---------------------------------------------------
     # Se pide el promedio ya agrupado por municipio para no bajar millones de filas.
     Fuente(
-        clave="saber11_2018",
-        nombre="Saber 11 2018-2 (calendario A) — promedios por municipio del colegio",
+        clave="saber11",
+        nombre="Saber 11 — puntaje global promedio por municipio del colegio y periodo",
         entidad="ICFES / datos.gov.co",
-        archivo="saber11_2018_municipios.csv",
-        urls=(SOCRATA.format(id="m2nt-jw2h"),),
-        pagina="https://www.datos.gov.co/d/m2nt-jw2h",
-        descripcion="Puntaje global promedio y número de estudiantes por municipio, 2018-2.",
+        archivo="saber11_municipios.csv",
+        # Primero la base unificada de resultados; si no responde, los conjuntos de un solo periodo de 2018-2019.
+        urls=tuple(SOCRATA.format(id=i) for i in ("kgxf-xxbe", "m2nt-jw2h", "ynam-yc42", "w42r-j8f9")),
+        pagina="https://www.datos.gov.co/browse?q=saber%2011",
+        descripcion="Promedio del puntaje global y número de estudiantes por municipio y periodo.",
         obligatoria=False,
         params={
-            "$select": "cole_cod_mcpio_ubicacion as cod_mpio, avg(punt_global) as punt_global, "
+            "$select": "periodo, cole_cod_mcpio_ubicacion as cod_mpio, avg(punt_global) as punt_global, "
                        "count(*) as estudiantes",
-            "$group": "cole_cod_mcpio_ubicacion",
-            "$limit": "5000",
+            "$group": "periodo, cole_cod_mcpio_ubicacion",
+            "$limit": "100000",
         },
     ),
     # --- Geometrías -----------------------------------------------------------------------------

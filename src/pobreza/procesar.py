@@ -112,6 +112,7 @@ def procesar_ipm_municipal() -> pd.DataFrame | None:
     ancho = largo.pivot_table(index=["cod_mpio", "dominio"], columns="indicador", values="valor").reset_index()
     ancho = ancho.merge(nombres, on="cod_mpio", how="left")
     ancho.insert(1, "cod_dpto", ancho["cod_mpio"].str[:2])
+    ancho["departamento"] = ancho["cod_dpto"].map(NOMBRES)
     columnas = ["cod_mpio", "cod_dpto", "municipio", "departamento", "dominio", "ipm"] + \
                [c for c in IPM_INDICADORES if c in ancho.columns] + \
                [c for c in ancho.columns if c not in IPM_INDICADORES and c not in
@@ -215,6 +216,16 @@ DEPARTAMENTOS = {
     "63": "quindio", "66": "risaralda", "68": "santander", "70": "sucre", "73": "tolima", "76": "valle del cauca",
     "81": "arauca", "85": "casanare", "86": "putumayo", "88": "san andres", "91": "amazonas", "94": "guainia",
     "95": "guaviare", "97": "vaupes", "99": "vichada",
+}
+
+
+NOMBRES = {
+    "00": "Nacional", "05": "Antioquia", "08": "Atlántico", "11": "Bogotá D.C.", "13": "Bolívar", "15": "Boyacá",
+    "17": "Caldas", "18": "Caquetá", "19": "Cauca", "20": "Cesar", "23": "Córdoba", "25": "Cundinamarca",
+    "27": "Chocó", "41": "Huila", "44": "La Guajira", "47": "Magdalena", "50": "Meta", "52": "Nariño",
+    "54": "Norte de Santander", "63": "Quindío", "66": "Risaralda", "68": "Santander", "70": "Sucre",
+    "73": "Tolima", "76": "Valle del Cauca", "81": "Arauca", "85": "Casanare", "86": "Putumayo",
+    "88": "San Andrés", "91": "Amazonas", "94": "Guainía", "95": "Guaviare", "97": "Vaupés", "99": "Vichada",
 }
 
 
@@ -340,7 +351,7 @@ def procesar_ipm_departamental() -> pd.DataFrame | None:
         return None
     df = pd.DataFrame(filas)
     df = df[~df.duplicated(["cod_dpto", "dominio", "indicador", "anio"], keep="first")]
-    df["departamento"] = df["cod_dpto"].map(lambda c: "Nacional" if c == "00" else DEPARTAMENTOS[c].title())
+    df["departamento"] = df["cod_dpto"].map(NOMBRES)
     df = df.sort_values(["indicador", "dominio", "cod_dpto", "anio"])
     df.to_csv(PROCESADOS / "ipm_departamental.csv", index=False)
     print(f"  ipm_departamental.csv: {df['cod_dpto'].nunique()} territorios, indicadores {sorted(df['indicador'].unique())}, "
@@ -351,18 +362,29 @@ def procesar_ipm_departamental() -> pd.DataFrame | None:
 # --- Saber 11 ------------------------------------------------------------------------------------
 
 def procesar_saber11() -> pd.DataFrame | None:
-    ruta = CRUDOS / "saber11_2018_municipios.csv"
+    """Promedio por municipio en el año más cercano a 2018 (el del censo), ponderado por estudiantes."""
+    ruta = CRUDOS / "saber11_municipios.csv"
     if not ruta.exists():
-        print("  (falta saber11_2018_municipios.csv, se salta)")
+        print("  (falta saber11_municipios.csv, se salta)")
         return None
-    df = pd.read_csv(ruta, dtype={"cod_mpio": str})
+    df = pd.read_csv(ruta, dtype=str)
     df["cod_mpio"] = df["cod_mpio"].map(lambda v: codigo(v, 5))
-    df = df.dropna(subset=["cod_mpio"])
     df["punt_global"] = pd.to_numeric(df["punt_global"], errors="coerce")
     df["estudiantes"] = pd.to_numeric(df["estudiantes"], errors="coerce")
-    df.to_csv(PROCESADOS / "saber11_2018.csv", index=False)
-    print(f"  saber11_2018.csv: {len(df)} municipios, {df['estudiantes'].sum():,.0f} estudiantes")
-    return df
+    df["anio"] = pd.to_numeric(df["periodo"].str[:4], errors="coerce") if "periodo" in df else 2018
+    df = df.dropna(subset=["cod_mpio", "punt_global", "estudiantes", "anio"])
+    df["anio"] = df["anio"].astype(int)
+    df["suma"] = df["punt_global"] * df["estudiantes"]
+    serie = df.groupby(["cod_mpio", "anio"], as_index=False)[["suma", "estudiantes"]].sum()
+    serie["punt_global"] = serie["suma"] / serie["estudiantes"]
+    serie = serie.drop(columns="suma")
+    serie.to_csv(PROCESADOS / "saber11_serie.csv", index=False)
+    anio = min(serie["anio"].unique(), key=lambda a: (abs(a - 2018), a))
+    corte = serie[serie["anio"] == anio].drop(columns="anio")
+    corte.to_csv(PROCESADOS / "saber11_2018.csv", index=False)
+    print(f"  saber11_2018.csv: año {anio}, {len(corte)} municipios, {corte['estudiantes'].sum():,.0f} estudiantes; "
+          f"serie {serie['anio'].min()}–{serie['anio'].max()}")
+    return corte
 
 
 # --- Tabla maestra -------------------------------------------------------------------------------
